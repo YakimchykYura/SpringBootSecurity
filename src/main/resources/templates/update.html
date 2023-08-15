@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Note</title>
+</head>
+<body>
+<h1 class="mt-4 text-center">Edit Note</h1>
+
+<div>
+  <form id="editNoteForm">
+    <input type="hidden" id="noteId" name="noteId" value="${note.id}">
+    <label><input required type="text" id="noteTitle" placeholder="Note text" min="0" th:value="${note.content}"/></label>
+    <label><input required type="text" id="noteContent" name="name" placeholder="Note title" th:value="${note.title}"/></label>
+    <button type="submit">Save</button>
+    <button type="button" id="goBackButton">Back</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('editNoteForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const noteId = [[${note.id}]];
+    const noteTitle = document.getElementById('noteTitle').value;
+    const noteContent = document.getElementById('noteContent').value;
+
+    const data = {
+      id: noteId,
+      title: noteTitle,
+      content: noteContent
+    };
+
+    fetch('/note/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+            .then(function (response) {
+              if (response.ok) {
+                alert('Нотатка успішно змінена!');
+                window.location.href = '/note/list';
+              } else {
+                console.error('error: ', response);
+              }
+            })
+            .catch(function (error) {
+              console.error('Помилка:', error);
+            });
+  });
+
+  document.getElementById('goBackButton').addEventListener('click', function () {
+    window.location.href = '/note/list';
+  });
+</script>
+</body>
+</html>
